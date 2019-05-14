@@ -1,3 +1,6 @@
+#ifndef CASHIER_H
+#define CASHIER_H
+
 #include <stdlib.h>
 
 #include "queue.h"
@@ -28,3 +31,5 @@ int getWaitingTime(Cashier *c);
 int getSpeed(Cashier *c);
 Bool isEmpty(Cashier *c);
 void printCashier(Cashier *c);
+
+#endif

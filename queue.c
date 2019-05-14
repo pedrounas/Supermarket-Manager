@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "queue.h"
 
@@ -19,60 +20,67 @@ Queue *mk_empty_queue(int n)
     if (q == NULL)
         queue_exit_error("sem memoria");
 
-    q->queue = (int *)malloc(sizeof(int) * n);
+    q->queue = (void *)malloc(sizeof(void*) * n);
     if (q->queue == NULL)
         queue_exit_error("sem memoria");
 
     q->nmax = n;
-    q->inicio = -1;
-    q->fim = 0;
+    q->start = -1;
+    q->end = 0;
+
     return q;
 }
 
 // libertar fila
 void free_queue(Queue *q)
 {
-    if (q != NULL)
-    {
-        free(q->queue);
-        free(q);
-    }
-    else
+    if (q == NULL)
         queue_exit_error("fila mal construida");
+
+    if(q->queue != NULL){
+        for(int i=0; i<q->nmax; i++)
+            if(q->queue[i] != NULL)
+                free(q->queue[i]);
+
+        free(q->queue);
+    }
+    free(q);
 }
 
 // colocar valor na fila
-void enqueue(int v, Queue *q)
+void enqueue(void* v, Queue *q)
 {
-    if (queue_is_full(q) == TRUE)
+    if (q == NULL)
+        queue_exit_error("fila mal construida");
+    else if (queue_is_full(q) == TRUE)
         queue_exit_error("fila sem lugar");
 
-    if (q->queue == NULL)
-        queue_exit_error("fila mal construida");
-
     if (queue_is_empty(q) == TRUE)
-        q->inicio = q->fim; // fila fica com um elemento
-    q->queue[q->fim] = v;
-    q->fim = (q->fim + 1) % (q->nmax);
+        q->start = q->end; // fila fica com um elemento
+
+    q->queue[q->end] = v;
+    q->end = (q->end + 1) % (q->nmax);
 }
 
 // retirar valor na fila
-int dequeue(Queue *q)
+void* dequeue(Queue *q)
 {
-    int aux;
-    if (queue_is_empty(q) == TRUE)
+    if (q == NULL)
+        queue_exit_error("fila mal construida");
+    else if (queue_is_empty(q) == TRUE)
         queue_exit_error("fila sem valores");
 
-    if (q->queue == NULL)
-        queue_exit_error("fila mal construida");
+    void* aux = q->queue[q->start];
+    q->queue[q->start] = NULL;
 
-    aux = q->queue[q->inicio];
-    q->inicio = (q->inicio + 1) % (q->nmax);
-    if (q->inicio == q->fim)
+    q->start = (q->start + 1) % (q->nmax);
+
+    if (q->start == q->end)
     { // se só tinha um elemento
-        q->inicio = -1;
-        q->fim = 0;
+        q->start = -1;
+        q->end = 0;
     }
+
     return aux;
 }
 
@@ -82,8 +90,9 @@ Bool queue_is_empty(Queue *q)
     if (q == NULL)
         queue_exit_error("fila mal construida");
 
-    if (q->inicio == -1)
+    if (q->start == -1)
         return TRUE;
+
     return FALSE;
 }
 
@@ -93,11 +102,32 @@ Bool queue_is_full(Queue *q)
     if (q == NULL)
         queue_exit_error("fila mal construida");
 
-    if (q->fim == q->inicio)
+    if (q->end == q->start)
         return TRUE;
+
     return FALSE;
 }
 
-int primeiro(Queue *q) {
-    return q->inicio;
+void* first(Queue *q) {
+    if (q == NULL)
+        queue_exit_error("fila mal construida");
+    else if (queue_is_empty(q) == TRUE)
+        queue_exit_error("fila sem valores");
+
+    return q->queue[q->start];
+}
+
+int length(Queue *q){
+    if (q == NULL)
+        queue_exit_error("fila mal construida");
+
+    if(queue_is_empty(q) == TRUE)
+        return 0;
+    else if(queue_is_full(q) == TRUE)
+        return q->nmax;
+
+    if(q->start > q->end)
+        return q->start - q->end;
+
+    return q->end - q->start;
 }

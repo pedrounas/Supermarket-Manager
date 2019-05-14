@@ -38,7 +38,7 @@ void getResults(Cashier **list)
 
 /* TODO move_clients(Cashier **list) */
 
-void simulation(rate, productRate, numberOfCashiers, numberOfTurns)
+void simulation(int rate, productRate, numberOfCashiers, numberOfTurns)
 {
     Cashier *list[size];
     memset(&list, 0, sizeof list);
@@ -54,15 +54,13 @@ void simulation(rate, productRate, numberOfCashiers, numberOfTurns)
         if (random <= (int)rate / 100)
         {
             int numberOfProducts = randomNumber();
-            Cliente *c;
-            c->entrada = i;
-            c->items = numberOfProducts;
+            Client *c = mk_client(i, numberOfProducts);
 
             printf("New client with %d products entered at %d\n", numberOfProducts, i);
 
             int cashierId = chooseCashier(list);
 
-            enqueue(c->items, list[cashierId]->queue);
+            enqueue(items(c), list[cashierId]->queue);
         }
 
         showCashiers(list);

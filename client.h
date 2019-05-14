@@ -1,11 +1,14 @@
-#include "queue.h"
+#ifndef CLIENT_H
+#define CLIENT_H
 
-typedef struct
+typedef struct _Client
 {
-    Queue *items;
-    int entrada;
-} Cliente;
+    int items, entrance;
+} Client;
 
-int numero_de_artigos(Cliente *c);
-int tempo_de_entrada(Cliente *c);
-void imprime_cliente(Cliente *c);
+Client *mk_client(int items, int entrada);
+int items(Client *c);
+int entrance(Client *c);
+void print_client(Client *c);
+
+#endif

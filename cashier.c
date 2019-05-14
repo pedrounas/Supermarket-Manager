@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "queue.h"
+#include "client.h"
 #include "cashier.h"
 
 int randomNumber()
@@ -80,11 +82,10 @@ Bool isEmpty(Cashier *c)
 void printCashier(Cashier *c)
 {
     printf("Caixa %d (%d): ", c->id, c->eta);
-    int i = 0;
-    while (c->queue->queue[i + 1] != NULL)
-    {
-        printf("%d ", c->queue->queue[i]);
-        i++;
-    }
+
+
+    for(int i=0; c->queue->queue[i + 1] != NULL; i++)
+        print_client(c->queue->queue[i]);
+
     printf("\n");
 }
