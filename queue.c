@@ -77,7 +77,7 @@ int dequeue(Queue *q)
 }
 
 // verificar se a fila está vazia
-BOOL queue_is_empty(Queue *q)
+Bool queue_is_empty(Queue *q)
 {
     if (q == NULL)
         queue_exit_error("fila mal construida");
@@ -88,7 +88,7 @@ BOOL queue_is_empty(Queue *q)
 }
 
 // verificar se a fila não admite mais elementos
-BOOL queue_is_full(Queue *q)
+Bool queue_is_full(Queue *q)
 {
     if (q == NULL)
         queue_exit_error("fila mal construida");

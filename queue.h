@@ -5,7 +5,7 @@ typedef enum
 {
     FALSE,
     TRUE
-} BOOL;
+} Bool;
 
 typedef struct fila
 {
@@ -20,9 +20,9 @@ void enqueue(int v, Queue *f);
 // retirar valor na fila
 int dequeue(Queue *f);
 // verificar se a fila está vazia
-BOOL queue_is_empty(Queue *f);
+Bool queue_is_empty(Queue *f);
 // verificar se a fila não admite mais elementos
-BOOL queue_is_full(Queue *f);
+Bool queue_is_full(Queue *f);
 // liberta fila
 void free_queue(Queue *f);
 // retorna o primeiro elemento
@@ -32,4 +32,4 @@ int primeiro(Queue *f);
 // retorna uma lista a partir da fila
 // FILA *lista_fila(Queue *f);
 // verifica se é fila
-// BOOL e_fila(Queue *f);
+// Bool e_fila(Queue *f);
