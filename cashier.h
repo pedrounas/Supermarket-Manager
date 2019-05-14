@@ -10,11 +10,11 @@ typedef struct
     int products;
     int waitingTime;
     int id;
-    int speed = randomNumber();
+    int speed;
 } Cashier;
 
 int randomNumber();
-void changeEta(Cashier *c, int n);
+void updateEta(Cashier *c, int n);
 void addClient(Cashier *c);
 void updateProducts(Cashier *c, int n);
 void updateWaitingTime(Cashier *c, int n);
@@ -25,6 +25,6 @@ int getEta(Cashier *c);
 int getClients(Cashier *c);
 int getProducts(Cashier *c);
 int getWaitingTime(Cashier *c);
-float getAverage(Cashier *c);
+float getSpeed(Cashier *c);
 Bool isEmpty(Cashier *c);
-char *printCashier(Cashier *c);
+void printCashier(Cashier *c);
