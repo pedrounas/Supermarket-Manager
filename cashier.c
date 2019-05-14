@@ -67,7 +67,7 @@ int getWaitingTime(Cashier *c)
     return c->waitingTime;
 }
 
-float getSpeed(Cashier *c)
+int getSpeed(Cashier *c)
 {
     return c->speed;
 }

@@ -25,6 +25,6 @@ int getEta(Cashier *c);
 int getClients(Cashier *c);
 int getProducts(Cashier *c);
 int getWaitingTime(Cashier *c);
-float getSpeed(Cashier *c);
+int getSpeed(Cashier *c);
 Bool isEmpty(Cashier *c);
 void printCashier(Cashier *c);
