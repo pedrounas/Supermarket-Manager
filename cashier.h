@@ -14,6 +14,7 @@ typedef struct
     int waitingTime;
     int id;
     int speed;
+    int currentClients;
 } Cashier;
 
 int randomNumber();
@@ -26,6 +27,7 @@ Queue *getQueue(Cashier *c);
 int getId(Cashier *c);
 int getEta(Cashier *c);
 int getClients(Cashier *c);
+int getCurrentClients(Cashier *c);
 int getProducts(Cashier *c);
 int getWaitingTime(Cashier *c);
 int getSpeed(Cashier *c);

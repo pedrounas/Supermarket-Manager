@@ -14,7 +14,7 @@ int randomNumber()
     return i;
 }
 
-void changeEta(Cashier *c, int n)
+void updateEta(Cashier *c, int n)
 {
     c->eta += n;
 }
@@ -37,6 +37,7 @@ void updateWaitingTime(Cashier *c, int n)
 void removeClient(Cashier *c)
 {
     dequeue(c->queue);
+    c->currentClients--;
 }
 
 Queue *getQueue(Cashier *c)
@@ -57,6 +58,11 @@ int getEta(Cashier *c)
 int getClients(Cashier *c)
 {
     return c->numberOfClients;
+}
+
+int getCurrentClients(Cashier *c)
+{
+    return c->currentClients;
 }
 
 int getProducts(Cashier *c)
