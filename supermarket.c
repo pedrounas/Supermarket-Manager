@@ -88,10 +88,29 @@ int chooseCashier(Cashier **list)
     return cashier;
 }
 
+Cashier **startCashier()
+{
+    Cashier **list = (Cashier **)malloc(sizeof(Cashier *) * size);
+    for (int i = 0; i < size; i++)
+    {
+        Cashier *c = (Cashier *)malloc(sizeof(Cashier));
+        c->queue = mk_empty_queue(size);
+        c->eta = 0;
+        c->numberOfClients = 0;
+        c->products = 0;
+        c->waitingTime = 0;
+        c->id = i;
+        c->speed = randomNumber();
+        c->currentClients = 0;
+        list[i] = c;
+    }
+    return list;
+}
+
 void simulation(int rate, int productRate, int numberOfCashiers, int numberOfTurns)
 {
-    Cashier *list[size];
-    
+    Cashier **list = startCashier();
+
     int i;
 
     for (i = 0; i < numberOfTurns; i++)
@@ -105,7 +124,7 @@ void simulation(int rate, int productRate, int numberOfCashiers, int numberOfTur
         if (random <= (int)rate / 100)
         {
             int numberOfProducts = randomNumber();
-            Client *c = mk_client(i, numberOfProducts);
+            Client *c = mk_client(i*4,i, numberOfProducts);
 
             printf("New client with %d products entered at %d\n", numberOfProducts, i);
 
