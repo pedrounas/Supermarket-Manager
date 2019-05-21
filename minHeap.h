@@ -1,3 +1,5 @@
+#ifndef MINHEAP_H
+#define MINHEAP_H
 
 typedef struct qnode {
   int vert, vertkey;
@@ -33,3 +35,5 @@ static void heapify(int i,HEAPMIN *q);
 static void swap(int i,int j,HEAPMIN *q);
 static int compare(int i, int j, HEAPMIN *q);
 static int pos_valida(int i,HEAPMIN *q);
+
+#endif
