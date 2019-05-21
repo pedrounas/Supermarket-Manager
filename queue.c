@@ -24,6 +24,9 @@ Queue *mk_empty_queue(int n)
     if (q->queue == NULL)
         queue_exit_error("sem memoria");
 
+    for(int i=0; i<n; i++)
+        q->queue[i] = NULL;
+
     q->nmax = n;
     q->start = -1;
     q->end = 0;
@@ -67,9 +70,9 @@ void* dequeue(Queue *q)
 {
     if (q == NULL)
         queue_exit_error("fila mal construida");
-    else if (queue_is_empty(q) == TRUE)
+    else if (queue_is_empty(q) == TRUE) {
         queue_exit_error("fila sem valores");
-
+    }
     void* aux = q->queue[q->start];
     q->queue[q->start] = NULL;
 
