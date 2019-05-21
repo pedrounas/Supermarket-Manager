@@ -9,19 +9,31 @@
 int randomNumber()
 {
     int i;
-    srand((unsigned)time(NULL));
-    i = rand() % 5;
+    i = rand() % 10;
+    if (i == 0)
+        i++;
+    return i;
+}
+
+int randomNumber_()
+{
+    int i;
+    i = rand() % 20;
+    if (i == 0)
+        i++;
     return i;
 }
 
 void updateEta(Cashier *c, int n)
 {
-    c->eta += n;
+    c->eta = n;
 }
 
-void addClient(Cashier *c)
+void addClient(Cashier *c,Client *client)
 {
     c->numberOfClients++;
+    c->currentClients++;
+    enqueue((void *)client, c->queue);
 }
 
 void updateProducts(Cashier *c, int n)
@@ -82,16 +94,16 @@ int getSpeed(Cashier *c)
 
 Bool isEmpty(Cashier *c)
 {
-    return c->products == 0 ? TRUE : FALSE;
+    return c->currentClients == 0 ? TRUE : FALSE;
 }
 
 void printCashier(Cashier *c)
 {
     printf("Caixa %d (%d): ", c->id, c->eta);
 
-
-    for(int i=0; c->queue->queue[i + 1] != NULL; i++)
-        print_client(c->queue->queue[i]);
+    //if(length(c->queue) != 0)
+    for (int i = 0; (Client *)(c->queue->queue[i]) != NULL; i++)
+        print_client((Client *)(c->queue->queue[i]));
 
     printf("\n");
 }

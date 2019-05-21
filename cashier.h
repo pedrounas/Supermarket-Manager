@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 
+#include "client.h"
 #include "queue.h"
 
 typedef struct
@@ -18,8 +19,9 @@ typedef struct
 } Cashier;
 
 int randomNumber();
+int randomNumber_();
 void updateEta(Cashier *c, int n);
-void addClient(Cashier *c);
+void addClient(Cashier *c, Client *client);
 void updateProducts(Cashier *c, int n);
 void updateWaitingTime(Cashier *c, int n);
 void removeClient(Cashier *c);
