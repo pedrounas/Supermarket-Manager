@@ -10,8 +10,8 @@
 
 #define MAX_CLIENTS 32
 
-Cashier **globalList;
 int size;
+int currClientNumber = 1;
 
 Bool emptyCashiers(Cashier **list)
 {
@@ -26,22 +26,21 @@ Bool emptyCashiers(Cashier **list)
 void showCashiers(Cashier **list)
 {
     for (int i = 0; i < size; i++)
-    {
         printCashier(list[i]);
-        if (length(list[i]->queue) > 1)
-            exit(0);
-    }
+    printf("\n");
 }
 
 void getResults(Cashier **list)
 {
+    printf("################# Information #################\n");
     for (int i = 0; i < size; i++)
     {
-        printf("Cashier %d with %d speed\n", list[i]->id, list[i]->speed);
+        printf("\nInformation about cashier %d:\n", list[i]->id);
+        printf("%d clients serviced\n", list[i]->numberOfClients);
         if (list[i]->numberOfClients != 0)
-            printf("%d clients serviced, %.2f products per client\n", list[i]->numberOfClients, (float)(list[i]->products / list[i]->numberOfClients));
-        else
-            printf("%d clients serviced\n", list[i]->numberOfClients);
+            printf("%.2f products per client\n", ((float)list[i]->products / list[i]->numberOfClients));
+        printf("%d products processed\n", list[i]->products);
+        printf("%d products per cycle\n", list[i]->speed);
     }
 }
 
@@ -56,7 +55,7 @@ void handleFirst(int i, Cashier *cashier)
         updateProducts(cashier, items(c));
         updateWaitingTime(cashier, (i - entrance(c)));
         removeClient(cashier);
-        printf("Client went through cashier %d\n", getId(cashier));
+        printf("Client %d went through cashier %d\n", id(c),getId(cashier));
     }
 }
 
@@ -98,13 +97,13 @@ Cashier **startCashier()
     for (int i = 0; i < size; i++)
     {
         Cashier *c = (Cashier *)malloc(sizeof(Cashier));
-        c->queue = mk_empty_queue(size);
+        c->queue = mk_empty_queue(MAX_CLIENTS);
         c->eta = 0;
         c->numberOfClients = 0;
         c->products = 0;
         c->waitingTime = 0;
         c->id = i;
-        c->speed = randomNumber();
+        c->speed = randomNumber(5);
         c->currentClients = 0;
         list[i] = c;
     }
@@ -119,31 +118,34 @@ void simulation(int rate, int productRate, int numberOfCashiers, int numberOfTur
 
     for (i = 0; i < numberOfTurns; i++)
     {
-        printf("Cycle %d\n", i);
+        printf("################# Cycle %d #################\n\n", i);
 
         int random = randomNumber_();
         if (random <= (int)rate / 100)
         {
-            int numberOfProducts = randomNumber();
-            Client *c = mk_client(i * 4, numberOfProducts * 2, i);
-            printf("New client with %d products entered at %d\n", numberOfProducts, i);
+            int numberOfProducts = randomNumber(productRate);
+            Client *c = mk_client(currClientNumber, numberOfProducts * 2, i);
+            currClientNumber++;
             int cashierId = chooseCashier(list);
+            printf("New client with %d products entered cashier %d at %d\n\n", numberOfProducts, cashierId,i);
             int itemList = items(c);
             addClient(list[cashierId], c);
         }
         showCashiers(list);
         moveClients(i, list);
+        printf("##########################################\n\n");
     }
 
-    printf("Simulation ended\n");
+    printf("------------------------------------- Simulation has ended! -------------------------------------\n\n");
 
     i++;
     while (emptyCashiers(list) == TRUE)
     {
-        printf("\nCycle %d\n", i);
-        moveClients(i, list);
+        printf("################# Cycle %d #################\n\n", i);
         showCashiers(list);
+        moveClients(i, list);
         i++;
+        printf("##########################################\n\n");
     }
 
     getResults(list);

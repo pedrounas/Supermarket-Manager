@@ -6,10 +6,10 @@
 #include "client.h"
 #include "cashier.h"
 
-int randomNumber()
+int randomNumber(int n)
 {
     int i;
-    i = rand() % 10;
+    i = rand() % n;
     if (i == 0)
         i++;
     return i;
@@ -99,11 +99,9 @@ Bool isEmpty(Cashier *c)
 
 void printCashier(Cashier *c)
 {
-    printf("Caixa %d (%d): ", c->id, c->eta);
+    printf("Caixa %d (%d): \n", c->id, c->eta);
 
     //if(length(c->queue) != 0)
     for (int i = 0; (Client *)(c->queue->queue[i]) != NULL; i++)
         print_client((Client *)(c->queue->queue[i]));
-
-    printf("\n");
 }
