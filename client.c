@@ -49,5 +49,5 @@ void print_client(Client *c){
 	if (c == NULL)
         client_exit_error("cliente nulo");
 
-	printf("Cliente com %d artigos e tempo de entrada %d\n", c->items, c->entrance);
+	printf("Cliente %d com %d artigos e tempo de entrada %d\n", c->id, c->items, c->entrance);
 }
