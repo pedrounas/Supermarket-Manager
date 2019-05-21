@@ -1,4 +1,4 @@
-INTERM=queue.c queue.h client.c client.h cashier.c cashier.h supermarket.c
+INTERM=queue.c queue.h client.c client.h cashier.c cashier.h minHeap.c minHeap.h supermarket.c
 PROGRAM=./supermarket
 CFLAGS=-Wall -g -fsanitize=address
 CC = gcc
