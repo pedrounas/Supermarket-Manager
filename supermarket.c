@@ -54,8 +54,8 @@ void handleFirst(int i, Cashier *cashier)
         updateEta(cashier, (i + 1));
         updateProducts(cashier, items(c));
         updateWaitingTime(cashier, (i - entrance(c)));
+        printf("Client %d went through cashier %d\n", id(c), getId(cashier));
         removeClient(cashier);
-        printf("Client %d went through cashier %d\n", id(c),getId(cashier));
     }
 }
 
@@ -149,6 +149,11 @@ void simulation(int rate, int productRate, int numberOfCashiers, int numberOfTur
     }
 
     getResults(list);
+
+    for(int i=0; i<size; i++)
+        free_cashier(list[i]);
+
+    free(list);
 }
 
 int main()

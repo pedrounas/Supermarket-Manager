@@ -35,5 +35,6 @@ int getWaitingTime(Cashier *c);
 int getSpeed(Cashier *c);
 Bool isEmpty(Cashier *c);
 void printCashier(Cashier *c);
+void free_cashier(Cashier *c);
 
 #endif
