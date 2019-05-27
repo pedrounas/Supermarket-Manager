@@ -5,6 +5,7 @@
 #include "queue.h"
 #include "client.h"
 #include "cashier.h"
+#include "minHeap.h"
 
 static void cashier_exit_error(char *msg);
 
@@ -16,20 +17,12 @@ static void cashier_exit_error(char *msg)
 
 int randomNumber(int n)
 {
-    int i;
-    i = rand() % n;
-    if (i == 0)
-        i++;
-    return i;
+    return rand() % n + 1;
 }
 
 int randomNumber_()
 {
-    int i;
-    i = rand() % 20;
-    if (i == 0)
-        i++;
-    return i;
+    return rand() % 20 + 1;
 }
 
 void updateEta(Cashier *c, int n)
@@ -47,7 +40,10 @@ void addClient(Cashier *c,Client *client)
 
     c->numberOfClients++;
     c->currentClients++;
-    enqueue((void *)client, c->queue);
+    if(c->priority)
+        insert((void *)client, c->queue.priorityQueue);
+    else
+        enqueue((void *)client, c->queue.normalQueue);
 }
 
 void updateProducts(Cashier *c, int n)
@@ -71,16 +67,23 @@ void removeClient(Cashier *c)
     if (c == NULL)
         cashier_exit_error("caixa mal construida");
 
-    free((Client *)dequeue(c->queue));
+    if(c->priority)
+        free(extractMin(c->queue.priorityQueue));
+    else
+        free((Client *)dequeue(c->queue.normalQueue));
+
     c->currentClients--;
 }
 
-Queue *getQueue(Cashier *c)
+void *getQueue(Cashier *c)
 {
     if (c == NULL)
         cashier_exit_error("caixa mal construida");
 
-    return c->queue;
+    if(c->priority)
+        return (void*)c->queue.priorityQueue;
+
+    return (void*)c->queue.normalQueue;
 }
 
 int getId(Cashier *c)
@@ -155,15 +158,26 @@ void printCashier(Cashier *c)
     printf("Caixa %d (%d): \n", c->id, c->eta);
 
     //if(length(c->queue) != 0)
-    for (int i = 0; (Client *)(c->queue->queue[i]) != NULL; i++)
-        print_client((Client *)(c->queue->queue[i]));
+    if(c->priority){
+        printf("Printing priority queue (order is not correct)\n");
+        for (int i = 1; i <= c->queue.priorityQueue->size; i++)
+            print_client((Client *)(c->queue.priorityQueue->clients[i]));
+    }
+    else{
+        printf("Printing normal queue\n");
+        for (int i = 0; (Client *)(c->queue.normalQueue->queue[i]) != NULL; i++)
+            print_client((Client *)(c->queue.normalQueue->queue[i]));
+    }
 }
 
 void free_cashier(Cashier *c){
     if (c == NULL)
         cashier_exit_error("caixa mal construida");
 
-    free_queue(c->queue);
+    if(c->priority)
+        destroy_heap(c->queue.priorityQueue);
+    else
+        free_queue(c->queue.normalQueue);
 
     free(c);
 }

@@ -2,12 +2,39 @@
 #include <stdlib.h>
 
 #include "minHeap.h"
+#include "client.h"
+
+static void heapify(int i,HEAPMIN *q);
+static void swap(int i,int j,HEAPMIN *q);
+static int compare(int i, int j, HEAPMIN *q);
+static int pos_valida(int i,HEAPMIN *q);
 
 static int compare(int i, int j, HEAPMIN *q){
-  if (q -> a[i].vertkey < q -> a[j].vertkey)
+  if (q -> clients[i]->items == q -> clients[j]->items){
+    if(q -> clients[i]->entrance < q -> clients[j]->entrance)
+      return -1;
+    else if(q -> clients[i]->entrance == q -> clients[j]->entrance)
+      return 0;
+    else
+      return 1;
+  }
+
+  if(q -> clients[i]->items < 10 && q -> clients[j]->items < 10){
+    if(q -> clients[i]->entrance < q -> clients[j]->entrance)
+      return -1;
+    else
+      return 1;
+  }
+
+  if(q -> clients[i]->items < 10)
     return -1;
-  if (q -> a[i].vertkey == q -> a[j].vertkey)
-    return 0;
+
+  if(q -> clients[j]->items < 10)
+    return 1;
+
+  if(q -> clients[i]->entrance < q -> clients[j]->entrance)
+    return -1;
+
   return 1;
 }
 
@@ -16,22 +43,22 @@ static int pos_valida(int i, HEAPMIN *q) {
   return (i >= 1 && i <= q -> size);
 }
 
-int extractMin(HEAPMIN *q) {
-  int vertv = q -> a[1].vert;
+Client* firstHeap(HEAPMIN *q){
+  return q->clients[1];
+}
+
+Client* extractMin(HEAPMIN *q) {
+  Client* vertv = q -> clients[1];
   swap(1,q->size,q);
-  q -> pos_a[vertv] = POSINVALIDA;  // assinala vertv como removido
   q -> size--;
   heapify(1,q);
   return vertv;
 }
 
-void decreaseKey(int vertv, int newkey, HEAPMIN *q){
-  int i = q -> pos_a[vertv];
-  q -> a[i].vertkey = newkey;
-
-  while(i > 1 && compare(i,PARENT(i),q) < 0){
-    swap(i,PARENT(i),q);
-    i = PARENT(i);
+void decreaseKey(Client* c, int pos, HEAPMIN *q){
+  while(pos > 1 && compare(pos,PARENT(pos),q) < 0){
+    swap(pos,PARENT(pos),q);
+    pos = PARENT(pos);
   }
 }
 
@@ -57,47 +84,35 @@ static void heapify(int i,HEAPMIN *q) {
 }
 
 static void swap(int i,int j,HEAPMIN *q){
-  QNODE aux;
-  q -> pos_a[q -> a[i].vert] = j;
-  q -> pos_a[q -> a[j].vert] = i;
-  aux = q -> a[i];
-  q -> a[i] = q -> a[j];
-  q -> a[j] = aux;
+  Client* aux;
+  aux = q -> clients[i];
+  q -> clients[i] = q -> clients[j];
+  q -> clients[j] = aux;
 }
 
 
 
-HEAPMIN *build_heap_min(int vec[], int n){
+HEAPMIN *build_heap_min(int n){
   // supor que vetor vec[.] guarda elementos nas posições 1 a n
   // cria heapMin correspondente em tempo O(n)
   HEAPMIN *q = (HEAPMIN *)malloc(sizeof(HEAPMIN));
-  int i;
-  q -> a = (QNODE *) malloc(sizeof(QNODE)*(n+1));
-  q -> pos_a = (int *) malloc(sizeof(int)*(n+1));
+  q -> clients = (Client **) malloc(sizeof(Client*)*(n+1));
   q -> sizeMax = n; // posicao 0 nao vai ser ocupada
-  q -> size = n;
-  for (i=1; i<= n; i++) {
-    q -> a[i].vert = i;
-    q -> a[i].vertkey = vec[i];
-    q -> pos_a[i] = i;  // posicao inicial do elemento i na heap
-  }
+  q -> size = 0;
 
-  for (i=n/2; i>=1; i--)
-    heapify(i,q);
   return q;
 }
 
 
-void insert(int vertv, int key, HEAPMIN *q)
+void insert(Client* c, HEAPMIN *q)
 {
   if (q -> sizeMax == q -> size) {
     fprintf(stderr,"Heapmin is full\n");
     exit(EXIT_FAILURE);
   }
   q -> size++;
-  q -> a[q->size].vert = vertv;
-  q -> pos_a[vertv] = q -> size;   // supondo 1 <= vertv <= n
-  decreaseKey(vertv,key,q);   // diminui a chave e corrige posicao se necessario
+  q -> clients[q->size] = c;
+  decreaseKey(c, q->size, q);   // diminui a chave e corrige posicao se necessario
 }
 
 
@@ -116,20 +131,12 @@ void write_heap(HEAPMIN *q){
 
   printf("(Vert,Key)\n---------\n");
   for(i=1; i <= q -> size; i++)
-    printf("(%d,%d)\n",q->a[i].vert,q->a[i].vertkey);
-
-  printf("-------\n(Vert,PosVert)\n---------\n");
-
-  for(i=1; i <= q -> sizeMax; i++)
-    if (pos_valida(q -> pos_a[i],q))
-      printf("(%d,%d)\n",i,q->pos_a[i]);
+    printf("(%d,%d)\n",q->clients[i]->id,q->clients[i]->entrance);
 }
-
 
 void destroy_heap(HEAPMIN *q){
   if (q != NULL) {
-    free(q -> a);
-    free(q -> pos_a);
+    free(q -> clients);
     free(q);
   }
 }

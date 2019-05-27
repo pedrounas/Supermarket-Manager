@@ -7,6 +7,7 @@
 #include "queue.h"
 #include "client.h"
 #include "cashier.h"
+#include "minHeap.h"
 
 #define MAX_CLIENTS 32
 
@@ -46,7 +47,12 @@ void getResults(Cashier **list)
 
 void handleFirst(int i, Cashier *cashier)
 {
-    Client *c = first(cashier->queue);
+    Client *c;
+    if(cashier->priority)
+        c = firstHeap(cashier->queue.priorityQueue);
+    else
+        c = first(cashier->queue.normalQueue);
+
     int waiting = i - getEta(cashier);
     int itemsProcessed = waiting * getSpeed(cashier);
     if (itemsProcessed >= items(c))
@@ -94,10 +100,19 @@ int chooseCashier(Cashier **list)
 Cashier **startCashier()
 {
     Cashier **list = (Cashier **)malloc(sizeof(Cashier *) * size);
+
     for (int i = 0; i < size; i++)
     {
         Cashier *c = (Cashier *)malloc(sizeof(Cashier));
-        c->queue = mk_empty_queue(MAX_CLIENTS);
+        int r = randomNumber(3);
+        if(r == 1){
+            c->priority = TRUE;
+            c->queue.priorityQueue = build_heap_min(MAX_CLIENTS);
+        }
+        else{
+            c->priority = FALSE;
+            c->queue.normalQueue = mk_empty_queue(MAX_CLIENTS);
+        }
         c->eta = 0;
         c->numberOfClients = 0;
         c->products = 0;
@@ -128,7 +143,6 @@ void simulation(int rate, int productRate, int numberOfCashiers, int numberOfTur
             currClientNumber++;
             int cashierId = chooseCashier(list);
             printf("New client with %d products entered cashier %d at %d\n\n", numberOfProducts, cashierId,i);
-            int itemList = items(c);
             addClient(list[cashierId], c);
         }
         showCashiers(list);
@@ -159,7 +173,6 @@ void simulation(int rate, int productRate, int numberOfCashiers, int numberOfTur
 int main()
 {
     srand(time(NULL));
-
     int rate, productRate, numberOfCashiers, numberOfTurns;
     printf("Insira a afluência, apetencia, numero de caixas e numero de ciclos: ");
     scanf("%d %d %d %d", &rate, &productRate, &numberOfCashiers, &numberOfTurns);

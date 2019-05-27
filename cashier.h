@@ -5,10 +5,15 @@
 
 #include "client.h"
 #include "queue.h"
+#include "minHeap.h"
 
 typedef struct
 {
-    Queue *queue;
+	Bool priority;
+	union {
+    	Queue *normalQueue;
+    	HEAPMIN *priorityQueue;
+    } queue;
     int eta;
     int numberOfClients;
     int products;
@@ -25,7 +30,7 @@ void addClient(Cashier *c, Client *client);
 void updateProducts(Cashier *c, int n);
 void updateWaitingTime(Cashier *c, int n);
 void removeClient(Cashier *c);
-Queue *getQueue(Cashier *c);
+void *getQueue(Cashier *c);
 int getId(Cashier *c);
 int getEta(Cashier *c);
 int getClients(Cashier *c);
