@@ -7,7 +7,6 @@
 static void heapify(int i,HEAPMIN *q);
 static void swap(int i,int j,HEAPMIN *q);
 static int compare(int i, int j, HEAPMIN *q);
-static int pos_valida(int i,HEAPMIN *q);
 
 static int compare(int i, int j, HEAPMIN *q){
   if (q -> clients[i]->items == q -> clients[j]->items){
@@ -36,11 +35,6 @@ static int compare(int i, int j, HEAPMIN *q){
     return -1;
 
   return 1;
-}
-
-
-static int pos_valida(int i, HEAPMIN *q) {
-  return (i >= 1 && i <= q -> size);
 }
 
 Client* firstHeap(HEAPMIN *q){

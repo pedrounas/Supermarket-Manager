@@ -127,7 +127,6 @@ int chooseCashier(Cashier **list, int n)
     }
     if (flag != INT_MAX)
     {
-        printf("HERE\n");
         return flag;
     }
 
@@ -172,16 +171,16 @@ void simulation(int rate, int productRate, int numberOfCashiers, int numberOfTur
 
     for (i = 0; i < numberOfTurns; i++)
     {
-        printf("################# Cycle %d #################\n\n", i);
+        printf("################# Cycle %d #################\n\n", i+1);
 
-        int random = randomNumber_();
-        if (random <= (int)rate / 100)
+        int random = randomNumber(10);
+        if (random <= (int)rate / 10)
         {
             int numberOfProducts = randomNumber(productRate);
-            Client *c = mk_client(currClientNumber, numberOfProducts, i);
+            Client *c = mk_client(currClientNumber, numberOfProducts, i+1);
             currClientNumber++;
             int cashierId = chooseCashier(list, numberOfProducts);
-            printf("New client with %d products entered cashier %d at %d\n\n", numberOfProducts, cashierId, i);
+            printf("New client with %d products entered cashier %d at %d\n\n", numberOfProducts, cashierId, i+1);
             addClient(list[cashierId], c);
         }
         showCashiers(list);
@@ -213,7 +212,7 @@ int main()
 {
     srand(time(NULL));
     int rate, productRate, numberOfCashiers, numberOfTurns;
-    printf("Insira a afluência, apetencia, numero de caixas e numero de ciclos: ");
+    printf("Insira a afluência (0 - 100), apetencia, numero de caixas e numero de ciclos: ");
     scanf("%d %d %d %d", &rate, &productRate, &numberOfCashiers, &numberOfTurns);
     size = numberOfCashiers;
     printf("\n");
