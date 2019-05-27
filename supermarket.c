@@ -37,6 +37,10 @@ void getResults(Cashier **list)
     for (int i = 0; i < size; i++)
     {
         printf("\nInformation about cashier %d:\n", list[i]->id);
+        if (list[i]->priority == TRUE)
+            printf("This is a priority cashier!\n");
+        else if (list[i]->priority == FALSE)
+            printf("This is a normal cashier!\n");
         printf("%d clients serviced\n", list[i]->numberOfClients);
         if (list[i]->numberOfClients != 0)
             printf("%.2f products per client\n", ((float)list[i]->products / list[i]->numberOfClients));
@@ -48,7 +52,7 @@ void getResults(Cashier **list)
 void handleFirst(int i, Cashier *cashier)
 {
     Client *c;
-    if(cashier->priority)
+    if (cashier->priority)
         c = firstHeap(cashier->queue.priorityQueue);
     else
         c = first(cashier->queue.normalQueue);
@@ -78,22 +82,55 @@ void moveClients(int i, Cashier **list)
     }
 }
 
-int chooseCashier(Cashier **list)
+int chooseCashier(Cashier **list, int n)
 {
     int minC = INT_MAX;
     int cashier = -1;
+    int flag = INT_MAX;
     for (int i = 0; i < size; i++)
     {
         if (isEmpty(list[i]) == TRUE)
         {
-            return i;
+            if (list[i]->priority == TRUE)
+            {
+                if (n <= 10)
+                {
+                    return i;
+                }
+            }
+            if (list[i]->priority == FALSE)
+            {
+                if (n > 10)
+                {
+                    return i;
+                }
+                else
+                {
+                    if (i < flag)
+                        flag = i;
+                }
+            }
         }
         if (getCurrentClients(list[i]) < minC)
         {
-            minC = getCurrentClients(list[i]);
-            cashier = i;
+            if (n <= 10 && list[i]->priority == TRUE)
+            {
+                minC = getCurrentClients(list[i]);
+                cashier = i;
+            }
+            if (n > 10 && list[i]->priority == FALSE)
+            {
+                minC = getCurrentClients(list[i]);
+                cashier = i;
+            }
         }
     }
+    if (flag != INT_MAX)
+    {
+        printf("HERE\n");
+        return flag;
+    }
+
     return cashier;
 }
 
@@ -105,11 +142,13 @@ Cashier **startCashier()
     {
         Cashier *c = (Cashier *)malloc(sizeof(Cashier));
         int r = randomNumber(3);
-        if(r == 1){
+        if (r == 1)
+        {
             c->priority = TRUE;
             c->queue.priorityQueue = build_heap_min(MAX_CLIENTS);
         }
-        else{
+        else
+        {
             c->priority = FALSE;
             c->queue.normalQueue = mk_empty_queue(MAX_CLIENTS);
         }
@@ -139,10 +178,10 @@ void simulation(int rate, int productRate, int numberOfCashiers, int numberOfTur
         if (random <= (int)rate / 100)
         {
             int numberOfProducts = randomNumber(productRate);
-            Client *c = mk_client(currClientNumber, numberOfProducts * 2, i);
+            Client *c = mk_client(currClientNumber, numberOfProducts, i);
             currClientNumber++;
-            int cashierId = chooseCashier(list);
-            printf("New client with %d products entered cashier %d at %d\n\n", numberOfProducts, cashierId,i);
+            int cashierId = chooseCashier(list, numberOfProducts);
+            printf("New client with %d products entered cashier %d at %d\n\n", numberOfProducts, cashierId, i);
             addClient(list[cashierId], c);
         }
         showCashiers(list);
@@ -164,7 +203,7 @@ void simulation(int rate, int productRate, int numberOfCashiers, int numberOfTur
 
     getResults(list);
 
-    for(int i=0; i<size; i++)
+    for (int i = 0; i < size; i++)
         free_cashier(list[i]);
 
     free(list);
